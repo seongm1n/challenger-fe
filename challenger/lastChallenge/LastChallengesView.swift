@@ -27,8 +27,7 @@ struct LastChallengesView: View {
     
     var body: some View {
         ZStack {
-            Color(UIColor(red: 0.11, green: 0.11, blue: 0.2, alpha: 1.0))
-                .ignoresSafeArea()
+            StarryBackgroundView()
             
             VStack(alignment: .leading, spacing: 0) {
                 VStack(alignment: .leading, spacing: 5) {

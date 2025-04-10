@@ -2,37 +2,42 @@ import SwiftUI
 
 struct ChallengesView: View {
     var body: some View {
-        VStack(spacing: 20) {
-            Text("도전 목록")
-                .font(.system(size: 26, weight: .bold))
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 20)
-                .padding(.top, 20)
+        ZStack {
+            StarryBackgroundView()
             
-            ScrollView {
-                VStack(spacing: 30) {
-                    ChallengeCard(
-                        title: "30일 동안 아침 6시 기상하기",
-                        description: "아침에 일찍 일어나서 하루를 더 효율적으로 보내고 건강한 수면 습관을 만들기 위한 도전입니다. 30일 동안 매일 아침 6시에 기상하여 인증샷을...",
-                        progress: 0.5,
-                        progressText: "15일째 진행 중 (50%)",
-                        isActive: true
-                    )
-                    
-                    ChallengeCard(
-                        title: "매일 1시간 책 읽기",
-                        description: "매일 일정 시간을 정해서 책을 읽는 습관을 만들기 위한 도전입니다. 다양한 분야의 책을 읽고 간단한 독후감을 작성하는 챌린지입니다.",
-                        progress: 0.75,
-                        progressText: "23일째 진행 중 (75%)",
-                        isActive: true
-                    )
+            VStack(spacing: 20) {
+                Text("도전 목록")
+                    .font(.system(size: 26, weight: .bold))
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 20)
+                
+                ScrollView {
+                    VStack(spacing: 30) {
+                        ChallengeCard(
+                            title: "30일 동안 아침 6시 기상하기",
+                            description: "아침에 일찍 일어나서 하루를 더 효율적으로 보내고 건강한 수면 습관을 만들기 위한 도전입니다. 30일 동안 매일 아침 6시에 기상하여 인증샷을...",
+                            progress: 0.5,
+                            progressText: "15일째 진행 중 (50%)",
+                            isActive: true
+                        )
+                        
+                        ChallengeCard(
+                            title: "매일 1시간 책 읽기",
+                            description: "매일 일정 시간을 정해서 책을 읽는 습관을 만들기 위한 도전입니다. 다양한 분야의 책을 읽고 간단한 독후감을 작성하는 챌린지입니다.",
+                            progress: 0.75,
+                            progressText: "23일째 진행 중 (75%)",
+                            isActive: true
+                        )
+                    }
+                    .padding(.horizontal, 20)
                 }
-                .padding(.horizontal, 20)
+                
+                Spacer()
             }
-            
-            Spacer()
         }
+        .background(Color(UIColor(red: 0.11, green: 0.11, blue: 0.2, alpha: 1.0)))
     }
 }
 
@@ -114,6 +119,5 @@ struct ProgressBar: View {
 struct ChallengesView_Previews: PreviewProvider {
     static var previews: some View {
         ChallengesView()
-            .background(Color(UIColor(red: 0.11, green: 0.11, blue: 0.2, alpha: 1.0)))
     }
 }

@@ -19,12 +19,7 @@ struct NewChallengeView: View {
 
     var body: some View {
         ZStack {
-            Color(UIColor(red: 0.11, green: 0.11, blue: 0.2, alpha: 1.0))
-                .ignoresSafeArea()
-                .onTapGesture {
-                    focusedField = nil
-                }
-
+            StarryBackgroundView()
             VStack(alignment: .leading, spacing: 25) {
                 Text("새 도전 만들기")
                     .font(.system(size: 26, weight: .bold))

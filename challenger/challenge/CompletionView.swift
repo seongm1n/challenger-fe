@@ -4,15 +4,15 @@ struct CompletionView: View {
     @Environment(\.presentationMode) var presentationMode
     
     let challengeTitle = "매일 30분 조깅하기"
-    let challengeDescription = "매일 아침 30분씩 조깅을 하면서 건강한 하루를 시작하기 위한 도전입니다. 꾸준히 실천하여 건강 습관을 만들어보세요"
+    let challengeDescription = "매일 아침 30분씩 조깅을 하면서 건강한 하루를 시작하기 위한 도전입니다. 꾸준히 실천하여 건강 습관을 만들어보세요."
     
     @State private var reflectionText = ""
     @FocusState private var isTextFieldFocused: Bool
     
     var body: some View {
         ZStack {
-            Color(UIColor(red: 0.11, green: 0.11, blue: 0.2, alpha: 1.0))
-                .ignoresSafeArea()
+            // 별이 반짝이는 배경 추가
+            StarryBackgroundView()
             
             VStack(spacing: 0) {
                 Text("회고하기")
@@ -55,6 +55,7 @@ struct CompletionView: View {
                                 .cornerRadius(10)
                         }
                         
+                        // 회고 작성 섹션
                         VStack(alignment: .leading, spacing: 10) {
                             Text("회고 작성")
                                 .font(.system(size: 18, weight: .semibold))
@@ -92,16 +93,18 @@ struct CompletionView: View {
                         }
                     }
                     .padding(.horizontal, 20)
-                    .padding(.bottom, 100)
+                    .padding(.bottom, 100) // 하단 버튼 공간 확보
                 }
                 
                 Spacer()
             }
             
+            // 하단 회고 저장 버튼
             VStack {
                 Spacer()
                 
                 Button(action: {
+                    // 회고 저장 로직
                     saveReflection()
                 }) {
                     Text("회고 저장하기")
@@ -122,6 +125,7 @@ struct CompletionView: View {
             }
         }
         .onTapGesture {
+            // 화면 탭 시 키보드 내리기
             isTextFieldFocused = false
         }
         .navigationBarBackButtonHidden(true)
@@ -136,7 +140,10 @@ struct CompletionView: View {
         )
     }
     
+    // 회고 저장 함수
     private func saveReflection() {
+        // 회고 저장 로직 구현
+        // 저장 완료 후 화면 닫기
         presentationMode.wrappedValue.dismiss()
     }
 }
