@@ -70,7 +70,7 @@ struct LoginView: View {
 
 struct MainView: View {
     var body: some View {
-        ChallengesView()
+        ContentView()
     }
 }
 
