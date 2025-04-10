@@ -6,6 +6,7 @@ enum Tab {
 
 struct TabBarView: View {
     @Binding var selectedTab: Tab
+    @State private var showNewChallenge = false
     
     var body: some View {
         HStack {
@@ -22,14 +23,27 @@ struct TabBarView: View {
             
             Spacer()
             
-            Button(action: { selectedTab = .add }) {
-                VStack(spacing: 8) {
-                    Image(systemName: "plus.square")
-                        .font(.system(size: 24))
-                    Text("추가")
-                        .font(.system(size: 12))
+            Button(action: {
+                showNewChallenge = true
+            }) {
+                ZStack {
+                    Circle()
+                        .fill(Color(UIColor(red: 0.3, green: 0.5, blue: 0.8, alpha: 1.0)))
+                        .frame(width: 60, height: 60)
+                        .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+                    
+                    VStack(spacing: 5) {
+                        Image(systemName: "plus")
+                            .font(.system(size: 22, weight: .bold))
+                        Text("추가")
+                            .font(.system(size: 11, weight: .semibold))
+                    }
+                    .foregroundColor(.white)
                 }
-                .foregroundColor(selectedTab == .add ? .white : .gray)
+                .offset(y: -15)
+            }
+            .sheet(isPresented: $showNewChallenge) {
+                NewChallengeView()
             }
             
             Spacer()

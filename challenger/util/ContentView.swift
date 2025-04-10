@@ -22,40 +22,10 @@ struct ContentView: View {
         switch selectedTab {
         case .challenges:
             ChallengesView()
-        case .add:
-            AddChallengeView()
         case .history:
-            HistoryChallengesView()
-        }
-    }
-}
-
-struct AddChallengeView: View {
-    var body: some View {
-        VStack {
-            Text("도전 추가")
-                .font(.system(size: 26, weight: .bold))
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 20)
-                .padding(.top, 20)
-            
-            Spacer()
-        }
-    }
-}
-
-struct HistoryChallengesView: View {
-    var body: some View {
-        VStack {
-            Text("지난 도전")
-                .font(.system(size: 26, weight: .bold))
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 20)
-                .padding(.top, 20)
-            
-            Spacer()
+            LastChallengesView()
+        default:
+            EmptyView()
         }
     }
 }
