@@ -69,12 +69,12 @@ struct ChallengeCard: View {
             
             HStack(spacing: 15) {
                 Button(action: {}) {
-                    Text("포기하기")
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(.white)
+                    Text("중단하기")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(Color.white.opacity(0.9))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 15)
-                        .background(Color(UIColor(red: 0.8, green: 0.3, blue: 0.3, alpha: 1.0)))
+                        .background(Color(UIColor(red: 0.6, green: 0.3, blue: 0.4, alpha: 0.85)))
                         .cornerRadius(10)
                 }
                 
@@ -90,8 +90,22 @@ struct ChallengeCard: View {
             }
         }
         .padding(20)
-        .background(Color(UIColor(red: 0.15, green: 0.15, blue: 0.25, alpha: 1.0)))
+        .background(
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(UIColor(red: 0.15, green: 0.15, blue: 0.25, alpha: 0.8)),
+                    Color(UIColor(red: 0.12, green: 0.12, blue: 0.22, alpha: 0.7))
+                ]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 15)
+                .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
+        )
         .cornerRadius(15)
+        .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
     }
 }
 

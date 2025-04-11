@@ -11,7 +11,6 @@ struct CompletionView: View {
     
     var body: some View {
         ZStack {
-            // 별이 반짝이는 배경 추가
             StarryBackgroundView()
             
             VStack(spacing: 0) {
@@ -39,7 +38,6 @@ struct CompletionView: View {
                                 .cornerRadius(10)
                         }
                         
-                        // 도전 내용 섹션
                         VStack(alignment: .leading, spacing: 5) {
                             Text("도전 내용")
                                 .font(.system(size: 18, weight: .semibold))
@@ -55,7 +53,6 @@ struct CompletionView: View {
                                 .cornerRadius(10)
                         }
                         
-                        // 회고 작성 섹션
                         VStack(alignment: .leading, spacing: 10) {
                             Text("회고 작성")
                                 .font(.system(size: 18, weight: .semibold))
@@ -93,18 +90,16 @@ struct CompletionView: View {
                         }
                     }
                     .padding(.horizontal, 20)
-                    .padding(.bottom, 100) // 하단 버튼 공간 확보
+                    .padding(.bottom, 100)
                 }
                 
                 Spacer()
             }
             
-            // 하단 회고 저장 버튼
             VStack {
                 Spacer()
                 
                 Button(action: {
-                    // 회고 저장 로직
                     saveReflection()
                 }) {
                     Text("회고 저장하기")
@@ -125,7 +120,6 @@ struct CompletionView: View {
             }
         }
         .onTapGesture {
-            // 화면 탭 시 키보드 내리기
             isTextFieldFocused = false
         }
         .navigationBarBackButtonHidden(true)
@@ -140,10 +134,7 @@ struct CompletionView: View {
         )
     }
     
-    // 회고 저장 함수
     private func saveReflection() {
-        // 회고 저장 로직 구현
-        // 저장 완료 후 화면 닫기
         presentationMode.wrappedValue.dismiss()
     }
 }

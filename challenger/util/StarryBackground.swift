@@ -4,7 +4,7 @@ struct StarryBackgroundView: View {
     let starCount: Int
     let backgroundColor: Color
     
-    init(starCount: Int = 100, backgroundColor: Color = Color(UIColor(red: 0.11, green: 0.11, blue: 0.2, alpha: 1.0))) {
+    init(starCount: Int = 200, backgroundColor: Color = Color(UIColor(red: 0.11, green: 0.11, blue: 0.2, alpha: 1.0))) {
         self.starCount = starCount
         self.backgroundColor = backgroundColor
     }
@@ -37,7 +37,7 @@ struct Star: View {
             .position(position)
             .opacity(opacity)
             .onAppear {
-                withAnimation(Animation.easeInOut(duration: Double.random(in: 0.5...3.0)).repeatForever().delay(Double.random(in: 0...2))) {
+                withAnimation(Animation.easeInOut(duration: Double.random(in: 0.5...3.0)).repeatForever().delay(Double.random(in: 0...1))) {
                     opacity = Double.random(in: 0.3...1.0)
                 }
             }
