@@ -69,23 +69,59 @@ struct ChallengeCard: View {
             
             HStack(spacing: 15) {
                 Button(action: {}) {
-                    Text("중단하기")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(Color.white.opacity(0.9))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 15)
-                        .background(Color(UIColor(red: 0.6, green: 0.3, blue: 0.4, alpha: 0.85)))
-                        .cornerRadius(10)
+                    HStack(spacing: 8) {
+                        Image(systemName: "pause.circle")
+                            .font(.system(size: 16))
+                        Text("중단하기")
+                            .font(.system(size: 16, weight: .medium))
+                    }
+                    .foregroundColor(Color.white.opacity(0.9))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 15)
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                Color(UIColor(red: 0.65, green: 0.35, blue: 0.45, alpha: 0.9)),
+                                Color(UIColor(red: 0.55, green: 0.25, blue: 0.35, alpha: 0.85))
+                            ]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
+                    )
+                    .cornerRadius(10)
+                    .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
                 }
                 
                 Button(action: {}) {
-                    Text("회고하기")
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 15)
-                        .background(Color(UIColor(red: 0.3, green: 0.5, blue: 0.8, alpha: 1.0)))
-                        .cornerRadius(10)
+                    HStack(spacing: 8) {
+                        Image(systemName: "pencil.and.outline")
+                            .font(.system(size: 16))
+                        Text("회고하기")
+                            .font(.system(size: 16, weight: .medium))
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 15)
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                Color(UIColor(red: 0.35, green: 0.55, blue: 0.85, alpha: 1.0)),
+                                Color(UIColor(red: 0.25, green: 0.45, blue: 0.75, alpha: 0.95))
+                            ]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.white.opacity(0.2), lineWidth: 0.5)
+                    )
+                    .cornerRadius(10)
+                    .shadow(color: Color.black.opacity(0.15), radius: 5, x: 0, y: 2)
                 }
             }
         }
@@ -117,14 +153,34 @@ struct ProgressBar: View {
             ZStack(alignment: .leading) {
                 Rectangle()
                     .frame(width: geometry.size.width, height: geometry.size.height)
-                    .opacity(0.3)
-                    .foregroundColor(Color(UIColor(red: 0.3, green: 0.5, blue: 0.8, alpha: 1.0)))
+                    .foregroundColor(Color(UIColor(red: 0.25, green: 0.3, blue: 0.45, alpha: 0.5)))
                     .cornerRadius(5)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 5)
+                            .stroke(Color.white.opacity(0.2), lineWidth: 0.5)
+                    )
                 
                 Rectangle()
                     .frame(width: min(CGFloat(self.value) * geometry.size.width, geometry.size.width), height: geometry.size.height)
-                    .foregroundColor(Color(UIColor(red: 0.3, green: 0.5, blue: 0.8, alpha: 1.0)))
+                    .foregroundColor(Color(UIColor(red: 0.4, green: 0.65, blue: 0.95, alpha: 1.0)))
                     .cornerRadius(5)
+                    .overlay(
+                        Rectangle()
+                            .fill(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        Color.white.opacity(0.0),
+                                        Color.white.opacity(0.2),
+                                        Color.white.opacity(0.0)
+                                    ]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .frame(width: min(CGFloat(self.value) * geometry.size.width, geometry.size.width), height: geometry.size.height)
+                            .cornerRadius(5)
+                    )
+                    .shadow(color: Color(UIColor(red: 0.3, green: 0.5, blue: 0.8, alpha: 0.5)), radius: 3, x: 0, y: 0)
             }
         }
     }

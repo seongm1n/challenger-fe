@@ -91,18 +91,30 @@ struct CompletedChallengeCard: View {
                     print("공유하기: \(challenge.title)")
                 }) {
                     HStack(spacing: 6) {
-                        Text("공유")
-                            .font(.system(size: 14))
-                            .foregroundColor(.white)
-                        
                         Image(systemName: "square.and.arrow.up")
                             .font(.system(size: 14))
-                            .foregroundColor(.white)
+                        Text("공유")
+                            .font(.system(size: 14, weight: .medium))
                     }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 7)
-                    .background(Color(UIColor(red: 0.3, green: 0.3, blue: 0.4, alpha: 1.0)))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                Color(UIColor(red: 0.35, green: 0.35, blue: 0.5, alpha: 1.0)),
+                                Color(UIColor(red: 0.25, green: 0.25, blue: 0.4, alpha: 0.95))
+                            ]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 18)
+                            .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
+                    )
                     .cornerRadius(18)
+                    .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
                 }
             }
         }
@@ -134,11 +146,31 @@ struct ProgressBarView: View {
             ZStack(alignment: .leading) {
                 RoundedRectangle(cornerRadius: 6)
                     .frame(width: geometry.size.width, height: geometry.size.height)
-                    .foregroundColor(Color(UIColor(red: 0.2, green: 0.2, blue: 0.3, alpha: 1.0)))
+                    .foregroundColor(Color(UIColor(red: 0.3, green: 0.35, blue: 0.45, alpha: 0.5)))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(Color.white.opacity(0.2), lineWidth: 0.5)
+                    )
                 
                 RoundedRectangle(cornerRadius: 6)
                     .frame(width: min(CGFloat(percentage) * geometry.size.width, geometry.size.width), height: geometry.size.height)
-                    .foregroundColor(Color(UIColor(red: 0.4, green: 0.8, blue: 0.4, alpha: 1.0)))
+                    .foregroundColor(Color(UIColor(red: 0.5, green: 0.9, blue: 0.5, alpha: 1.0)))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        Color.white.opacity(0.0),
+                                        Color.white.opacity(0.2),
+                                        Color.white.opacity(0.0)
+                                    ]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .frame(width: min(CGFloat(percentage) * geometry.size.width, geometry.size.width), height: geometry.size.height)
+                    )
+                    .shadow(color: Color(UIColor(red: 0.3, green: 0.7, blue: 0.4, alpha: 0.5)), radius: 3, x: 0, y: 0)
             }
         }
     }

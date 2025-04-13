@@ -144,13 +144,32 @@ struct NewChallengeView: View {
                     print("시작일: \(dateFormatter.string(from: startDate))")
                     focusedField = nil
                 }) {
-                    Text("도전 시작하기")
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 15)
-                        .background(Color(UIColor(red: 0.3, green: 0.5, blue: 0.8, alpha: 1.0)))
-                        .cornerRadius(10)
+                    HStack(spacing: 10) {
+                        Image(systemName: "flag.filled")
+                            .font(.system(size: 18, weight: .semibold))
+                        
+                        Text("도전 시작하기")
+                            .font(.system(size: 18, weight: .bold))
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                Color(UIColor(red: 0.35, green: 0.55, blue: 0.85, alpha: 1.0)),
+                                Color(UIColor(red: 0.25, green: 0.45, blue: 0.75, alpha: 0.95))
+                            ]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.white.opacity(0.2), lineWidth: 0.5)
+                    )
+                    .cornerRadius(10)
+                    .shadow(color: Color(UIColor(red: 0.2, green: 0.3, blue: 0.7, alpha: 0.3)), radius: 8, x: 0, y: 4)
                 }
                 .disabled(challengeTitle.isEmpty || challengeDescription.isEmpty || targetPeriod.isEmpty)
                 .opacity((challengeTitle.isEmpty || challengeDescription.isEmpty || targetPeriod.isEmpty) ? 0.5 : 1.0)
