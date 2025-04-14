@@ -15,7 +15,6 @@ class ChallengeService {
     private let apiManager = APIManager.shared
     
     init() {
-        loadChallenges()
     }
     
     func getChallenges() async throws -> [Challenge] {
@@ -41,26 +40,5 @@ class ChallengeService {
                 print("챌린지 삭제 실패: \(error)")
             }
         }
-    }
-    
-    // MARK: - Private Methods
-        
-    private func loadChallenges() {
-        guard let data = userDefaults.data(forKey: challengesKey),
-              let challenges = try? JSONDecoder().decode([Challenge].self, from: data) else {
-            challengesSubject.send([])
-            return
-        }
-        
-        challengesSubject.send(challenges)
-    }
-    
-    private func saveChallenges(_ challenges: [Challenge]) {
-        guard let data = try? JSONEncoder().encode(challenges) else {
-            return
-        }
-        
-        userDefaults.set(data, forKey: challengesKey)
-        challengesSubject.send(challenges)
     }
 } 
