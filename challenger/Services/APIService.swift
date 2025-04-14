@@ -13,11 +13,11 @@ class APIManager {
     }
     
     // MARK: - Challenge API
-    func saveChallenge(userId: Int, title: String, description: String, duration: Int) async throws -> ChallengeResponse {
-        return try await client.saveChallenge(userId: userId, title: title, description: description, duration: duration)
+    func saveChallenge(userId: Int, title: String, description: String, duration: Int) async throws {
+        let _ = try await client.saveChallenge(userId: userId, title: title, description: description, duration: duration)
     }
     
-    func getChallenges(userId: Int) async throws -> [Challenge] {
+    func fetchChallenges(userId: Int) async throws -> [Challenge] {
         return try await client.getChallenges(userId: userId)
     }
     
@@ -30,7 +30,7 @@ class APIManager {
         return try await client.saveLastChallenge(userId: userId, challengeId: challengeId, retrospection: retrospection)
     }
     
-    func getLastChallenges(userId: Int) async throws -> [LastChallenge] {
+    func fetchLastChallenges(userId: Int) async throws -> [LastChallenge] {
         return try await client.getLastChallenges(userId: userId)
     }
 }

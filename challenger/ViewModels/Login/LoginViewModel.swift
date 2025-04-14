@@ -1,8 +1,9 @@
+import Combine
 import Foundation
 import SwiftUI
-import Combine
 
 class LoginViewModel: ObservableObject {
+    // MARK: - Properties
     @Published var nickname: String = ""
     @Published var isLoginComplete: Bool = false
     
@@ -12,13 +13,16 @@ class LoginViewModel: ObservableObject {
     @AppStorage("userNickname") private var storedNickname = ""
     @AppStorage("userID") private var storedUserID = 0
     
+    // MARK: - Computed Properties
     var isButtonEnabled: Bool {
         return !nickname.isEmpty
     }
     
+    // MARK: - Initializer
     init() {
     }
     
+    // MARK: - Methods
     func login() {
         guard !nickname.isEmpty else { return }
         
@@ -41,7 +45,7 @@ class LoginViewModel: ObservableObject {
         nickname = ""
     }
     
-    func getUserId() -> Int {
+    func fetchUserId() -> Int {
         return storedUserID
     }
 }

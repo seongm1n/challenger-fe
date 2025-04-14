@@ -31,18 +31,18 @@ struct LastChallenge: Identifiable, Codable, Hashable {
         lhs.id == rhs.id
     }
     
-    static func fromChallenge(_ challenge: Challenge, retrospection: String = "", assessment: String = "평가를 기다리는 중입니다") -> LastChallenge {
-        let now = Date()
-        let startDate = Calendar.current.date(byAdding: .day, value: -challenge.duration, to: now) ?? now
-        
-        return LastChallenge(
-            id: challenge.id,
-            title: challenge.title,
-            description: challenge.description,
-            startDate: startDate,
-            endDate: now,
-            retrospection: retrospection,
-            assessment: assessment
-        )
-    }
+//    static func fromChallenge(_ challenge: Challenge, retrospection: String = "", assessment: String = "평가를 기다리는 중입니다") -> LastChallenge {
+//        let now = Date()
+//        let startDate = Calendar.current.date(byAdding: .day, value: -challenge.duration, to: now) ?? now
+//        
+//        return LastChallenge(
+//            id: challenge.id,
+//            title: challenge.title,
+//            description: challenge.description,
+//            startDate: startDate,
+//            endDate: now,
+//            retrospection: retrospection,
+//            assessment: assessment
+//        )
+//    }
 }

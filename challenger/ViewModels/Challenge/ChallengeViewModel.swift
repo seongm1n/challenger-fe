@@ -1,8 +1,9 @@
+import Combine
 import Foundation
 import SwiftUI
-import Combine
 
 class ChallengeViewModel: ObservableObject {
+    // MARK: - Properties
     @Published var challenge: Challenge
     @Published var showingProgressUpdateView: Bool = false
     @Published var showingCompletionView: Bool = false
@@ -11,11 +12,13 @@ class ChallengeViewModel: ObservableObject {
     private var challengeService: ChallengeService
     private var cancellables = Set<AnyCancellable>()
     
+    // MARK: - Initializer
     init(challenge: Challenge, challengeService: ChallengeService = ChallengeService()) {
         self.challenge = challenge
         self.challengeService = challengeService
     }
     
+    // MARK: - Methods
     func showProgressUpdate() {
         showingProgressUpdateView = true
     }

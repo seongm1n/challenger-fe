@@ -1,7 +1,8 @@
-import Foundation
 import Combine
+import Foundation
 
 class ChallengesViewModel: ObservableObject {
+    // MARK: - Properties
     @Published var challenges: [Challenge] = []
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
@@ -18,12 +19,13 @@ class ChallengesViewModel: ObservableObject {
     
     static let shared = ChallengesViewModel()
     
+    // MARK: - Initializer
     init(challengeService: ChallengeService = ChallengeService()) {
         self.challengeService = challengeService
-        subscribeToChanges()
         loadChallenges()
     }
     
+    // MARK: - Methods
     func refreshChallenges() {
         loadChallenges()
     }
@@ -32,14 +34,13 @@ class ChallengesViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         
-        Task{
-            let challenges = try await challengeService.getChallenges()
+        Task {
+            let challenges = try await challengeService.fetchChallenges()
             await MainActor.run {
                 self.challenges = challenges
+                self.isLoading = false
             }
         }
-        
-        isLoading = false
     }
     
     func reflectOnChallenge(id: Int) {
@@ -66,15 +67,5 @@ class ChallengesViewModel: ObservableObject {
     func cancelPauseChallenge() {
         challengeToConfirm = nil
         showingPauseConfirmation = false
-    }
-    
-    private func subscribeToChanges() {
-        challengeService.challengesPublisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] challenges in
-                self?.challenges = challenges.filter { $0.progress < 1.0 }
-                print("Publisher를 통한 도전 목록 갱신: \(challenges.count)개")
-            }
-            .store(in: &cancellables)
     }
 }

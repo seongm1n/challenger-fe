@@ -1,7 +1,8 @@
-import Foundation
 import Combine
+import Foundation
 
 class LastChallengesViewModel: ObservableObject {
+    // MARK: - Properties
     @Published var lastChallenges: [LastChallenge] = []
     @Published var isLoading: Bool = false
     @Published var errorMessage: String? = nil
@@ -9,31 +10,22 @@ class LastChallengesViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private let lastChallengeService: LastChallengeService
     
+    // MARK: - Initializer
     init(lastChallengeService: LastChallengeService = LastChallengeService()) {
         self.lastChallengeService = lastChallengeService
-        subscribeToChanges()
     }
     
+    // MARK: - Methods
     func loadLastChallenges() {
         isLoading = true
         errorMessage = nil
         
-        Task{
-            let lastChallenges = try await lastChallengeService.getLastChallenges()
+        Task {
+            let lastChallenges = try await lastChallengeService.fetchLastChallenges()
             await MainActor.run {
                 self.lastChallenges = lastChallenges
                 self.isLoading = false
             }
         }
-    }
-    
-    private func subscribeToChanges() {
-        lastChallengeService.lastChallengesPublisher
-            .dropFirst()
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] lastChallenges in
-                self?.lastChallenges = lastChallenges
-            }
-            .store(in: &cancellables)
     }
 }

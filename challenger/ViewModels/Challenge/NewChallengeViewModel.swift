@@ -1,8 +1,9 @@
+import Combine
 import Foundation
 import SwiftUI
-import Combine
 
 class NewChallengeViewModel: ObservableObject {
+    // MARK: - Properties
     @Published var challengeTitle: String = ""
     @Published var challengeDescription: String = ""
     @Published var duration: String = ""
@@ -13,11 +14,24 @@ class NewChallengeViewModel: ObservableObject {
     private var challengeService: ChallengeService
     private var cancellables = Set<AnyCancellable>()
     
+    // MARK: - Computed Properties
+    var isFormValid: Bool {
+        return !challengeTitle.isEmpty && !challengeDescription.isEmpty && !targetPeriod.isEmpty && (Int(targetPeriod) ?? 0) > 0
+    }
+    
+    var formattedDate: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy년 MM월 dd일"
+        return formatter.string(from: Date())
+    }
+    
+    // MARK: - Initializer
     init(challengeService: ChallengeService = ChallengeService()) {
         self.challengeService = challengeService
         self.targetPeriod = ""
     }
     
+    // MARK: - Methods
     func createChallenge() {
         guard !challengeTitle.isEmpty else { return }
         guard !challengeDescription.isEmpty else { return }
@@ -29,10 +43,9 @@ class NewChallengeViewModel: ObservableObject {
         let title = self.challengeTitle
         let description = self.challengeDescription
         
-        Task{
+        Task {
             let challenge = Challenge(id: 0, title: title, description: description, duration: durationValue, progress: 0.0)
-            let id = try await challengeService.saveChallenge(challenge)
-            print("저장 Id\(id) : \(challenge)")
+            try await challengeService.saveChallenge(challenge)
         }
         
         resetForm()
@@ -43,15 +56,5 @@ class NewChallengeViewModel: ObservableObject {
         challengeTitle = ""
         challengeDescription = ""
         targetPeriod = ""
-    }
-    
-    var isFormValid: Bool {
-        return !challengeTitle.isEmpty && !challengeDescription.isEmpty && !targetPeriod.isEmpty && (Int(targetPeriod) ?? 0) > 0
-    }
-    
-    var formattedDate: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy년 MM월 dd일"
-        return formatter.string(from: Date())
     }
 }

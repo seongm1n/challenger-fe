@@ -1,8 +1,9 @@
+import Combine
 import Foundation
 import SwiftUI
-import Combine
 
 class CompletionViewModel: ObservableObject {
+    // MARK: - Properties
     @Published var retrospectionText: String = ""
     @Published var isCompleted: Bool = false
     @Published var isSaving: Bool = false
@@ -13,6 +14,7 @@ class CompletionViewModel: ObservableObject {
     private let lastChallengeService: LastChallengeService
     private var cancellables = Set<AnyCancellable>()
     
+    // MARK: - Initializer
     init(challenge: Challenge, 
          challengeService: ChallengeService = ChallengeService(),
          lastChallengeService: LastChallengeService = LastChallengeService()) {
@@ -21,6 +23,7 @@ class CompletionViewModel: ObservableObject {
         self.lastChallengeService = lastChallengeService
     }
     
+    // MARK: - Methods
     func saveRetrospection() {
         guard !retrospectionText.isEmpty else {
             errorMessage = "회고 내용을 입력해주세요"
@@ -31,12 +34,8 @@ class CompletionViewModel: ObservableObject {
         errorMessage = nil
         
         Task{
-            let id = try await lastChallengeService.saveLastChallenge(challenge, retrospectionText)
-            print("저장 Id\(id) : \(challenge)")
+            try await lastChallengeService.saveLastChallenge(challenge, retrospectionText)
         }
-        
-        print("회고 내용: \(retrospectionText)")
-        print("도전 ID: \(challenge.id)")
         
         isCompleted = true
     }
