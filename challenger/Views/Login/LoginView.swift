@@ -1,9 +1,7 @@
 import SwiftUI
 
 struct LoginView: View {
-    @State private var nickname = ""
-    @State private var isLoginComplete = false
-    @AppStorage("userNickname") private var storedNickname = ""
+    @StateObject private var viewModel = LoginViewModel()
     
     var body: some View {
         NavigationView {
@@ -30,7 +28,7 @@ struct LoginView: View {
                 Spacer().frame(height: 100)
 
                 VStack(alignment: .leading, spacing: 8) {
-                    TextField("닉네임을 입력해주세요", text: $nickname)
+                    TextField("닉네임을 입력해주세요", text: $viewModel.nickname)
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(10)
@@ -39,20 +37,17 @@ struct LoginView: View {
                 .padding(.top, 10)
                 
                 Button(action: {
-                    if !nickname.isEmpty {
-                        storedNickname = nickname
-                        isLoginComplete = true
-                    }
+                    viewModel.login()
                 }) {
                     Text("시작하기")
                         .font(.headline)
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(nickname.isEmpty ? Color.gray : Color.blue)
+                        .background(viewModel.isButtonEnabled ? Color.blue : Color.gray)
                         .cornerRadius(10)
                 }
-                .disabled(nickname.isEmpty)
+                .disabled(!viewModel.isButtonEnabled)
                 .padding(.horizontal)
                 .padding(.bottom, 70)
                 
@@ -61,7 +56,7 @@ struct LoginView: View {
             .padding()
             .background(Color(.systemBackground))
             .navigationBarHidden(true)
-            .fullScreenCover(isPresented: $isLoginComplete) {
+            .fullScreenCover(isPresented: $viewModel.isLoginComplete) {
                 MainView()
             }
         }

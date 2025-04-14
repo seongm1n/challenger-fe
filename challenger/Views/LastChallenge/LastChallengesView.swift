@@ -1,69 +1,62 @@
 import SwiftUI
 
 struct LastChallengesView: View {
-    let completedChallenges: [CompletedChallenge] = [
-        CompletedChallenge(
-            id: "1",
-            title: "1000권 책 읽기",
-            description: "3년 동안 다양한 분야의 책을 읽고 독서 습관을 형성하는 도전입니다. 하루에 한 권 이상 읽지 않고 꾸준히 3년 동안 책을 읽었습니다.",
-            duration: "3년",
-            completionRate: 1.0
-        ),
-        CompletedChallenge(
-            id: "2",
-            title: "매일 1시간 운동하기",
-            description: "6개월 동안 매일 1시간씩 운동하는 도전입니다. 다양한 운동을 시도하며 체력을 기르고 건강한 습관을 형성했습니다.",
-            duration: "6개월",
-            completionRate: 1.0
-        ),
-        CompletedChallenge(
-            id: "3",
-            title: "매일 명상 10분",
-            description: "3개월 동안 매일 10분씩 명상하는 도전입니다. 다양한 명상법을 시도하며 마음의 안정을 찾고 집중력을 향상시켰습니다.",
-            duration: "3개월",
-            completionRate: 1.0
-        )
-    ]
+    @StateObject private var viewModel = LastChallengesViewModel()
     
     var body: some View {
-        ZStack {
-            StarryBackgroundView()
-            
-            VStack(alignment: .leading, spacing: 0) {
-                VStack(alignment: .leading, spacing: 5) {
-                    Text("완료한 도전 : 총 \(completedChallenges.count)개")
-                        .font(.system(size: 26, weight: .bold))
-                        .foregroundColor(.white)
-                        .padding(.top, 20)
-                        .padding(.bottom, 30)
-                }
-                .padding(.horizontal, 20)
+        NavigationStack {
+            ZStack {
+                StarryBackgroundView()
                 
-                ScrollView {
-                    VStack(spacing: 15) {
-                        ForEach(completedChallenges) { challenge in
-                            CompletedChallengeCard(challenge: challenge)
-                        }
+                VStack(alignment: .leading, spacing: 0) {
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text("완료한 도전 : 총 \(viewModel.lastChallenges.count)개")
+                            .font(.system(size: 26, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(.top, 20)
+                            .padding(.bottom, 30)
                     }
                     .padding(.horizontal, 20)
-                    .padding(.bottom, 20)
+                    
+                    if viewModel.isLoading {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                            .scaleEffect(1.5)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } else if viewModel.lastChallenges.isEmpty {
+                        VStack(spacing: 20) {
+                            Text("완료한 도전이 없습니다")
+                                .font(.system(size: 18))
+                                .foregroundColor(.white.opacity(0.7))
+                                .multilineTextAlignment(.center)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        }
+                    } else {
+                        ScrollView {
+                            VStack(spacing: 15) {
+                                ForEach(viewModel.lastChallenges) { challenge in
+                                    NavigationLink(destination: LastChallengeView(lastChallenge: challenge)) {
+                                        LastChallengeCard(challenge: challenge)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                }
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.bottom, 20)
+                        }
+                    }
                 }
             }
+            .navigationBarHidden(true)
+            .onAppear {
+                viewModel.loadLastChallenges()
+            }
         }
-        .navigationBarHidden(true)
     }
 }
 
-struct CompletedChallenge: Identifiable {
-    let id: String
-    let title: String
-    let description: String
-    let duration: String
-    let completionRate: Double
-}
-
-struct CompletedChallengeCard: View {
-    let challenge: CompletedChallenge
+struct LastChallengeCard: View {
+    let challenge: LastChallenge
     
     var body: some View {
         VStack(alignment: .leading, spacing: 15) {
@@ -78,8 +71,8 @@ struct CompletedChallengeCard: View {
                 .fixedSize(horizontal: false, vertical: true)
             
             HStack(alignment: .center) {
-                ProgressBarView(percentage: challenge.completionRate)
-                    .frame(width: 150, height: 12)
+                ProgressBarView(percentage: 1.0)
+                    .frame(width: 120, height: 12)
                 
                 Text("100% 완료!")
                     .font(.system(size: 15, weight: .bold))
@@ -88,7 +81,16 @@ struct CompletedChallengeCard: View {
                 Spacer()
                 
                 Button(action: {
-                    print("공유하기: \(challenge.title)")
+                    let message = "[\(challenge.title)] 도전을 성공적으로 완료했습니다! \(challenge.durationText) 동안 \(challenge.description)"
+                    let activityController = UIActivityViewController(
+                        activityItems: [message],
+                        applicationActivities: nil
+                    )
+                    
+                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                       let rootViewController = windowScene.windows.first?.rootViewController {
+                        rootViewController.present(activityController, animated: true, completion: nil)
+                    }
                 }) {
                     HStack(spacing: 6) {
                         Image(systemName: "square.and.arrow.up")
@@ -97,7 +99,7 @@ struct CompletedChallengeCard: View {
                             .font(.system(size: 14, weight: .medium))
                     }
                     .foregroundColor(.white)
-                    .padding(.horizontal, 14)
+                    .padding(.horizontal, 18)
                     .padding(.vertical, 8)
                     .background(
                         LinearGradient(

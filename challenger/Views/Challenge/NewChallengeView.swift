@@ -1,20 +1,12 @@
 import SwiftUI
 
 struct NewChallengeView: View {
-    @State private var challengeTitle: String = ""
-    @State private var challengeDescription: String = ""
-    @State private var targetPeriod: String = ""
-    @State private var startDate: Date = Date()
+    @Environment(\.presentationMode) var presentationMode
+    @StateObject private var viewModel = NewChallengeViewModel()
     
     @FocusState private var focusedField: Field?
     enum Field: Hashable {
         case title, description, period
-    }
-    
-    private var dateFormatter: DateFormatter {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy년 MM월 dd일"
-        return formatter
     }
 
     var body: some View {
@@ -32,7 +24,7 @@ struct NewChallengeView: View {
                         .foregroundColor(Color.white.opacity(0.8))
                     
                     ZStack(alignment: .leading) {
-                        TextField("", text: $challengeTitle)
+                        TextField("", text: $viewModel.challengeTitle)
                             .focused($focusedField, equals: .title)
                             .padding(15)
                             .background(Color(UIColor(red: 0.15, green: 0.15, blue: 0.25, alpha: 1.0)))
@@ -44,7 +36,7 @@ struct NewChallengeView: View {
                             )
                             .tint(.blue)
                         
-                        if challengeTitle.isEmpty {
+                        if viewModel.challengeTitle.isEmpty {
                             Text("도전 제목을 입력하세요")
                                 .foregroundColor(Color.white.opacity(0.4))
                                 .padding(.leading, 15)
@@ -59,7 +51,7 @@ struct NewChallengeView: View {
                         .foregroundColor(Color.white.opacity(0.8))
                     
                     ZStack(alignment: .topLeading) {
-                        TextEditor(text: $challengeDescription)
+                        TextEditor(text: $viewModel.challengeDescription)
                             .focused($focusedField, equals: .description)
                             .frame(height: 150)
                             .padding(10)
@@ -74,7 +66,7 @@ struct NewChallengeView: View {
                             .scrollContentBackground(.hidden)
                             .lineSpacing(5)
 
-                        if challengeDescription.isEmpty {
+                        if viewModel.challengeDescription.isEmpty {
                             Text("도전에 대한 설명을 입력하세요")
                                 .foregroundColor(Color.white.opacity(0.4))
                                 .padding(.horizontal, 15)
@@ -91,7 +83,7 @@ struct NewChallengeView: View {
                     
                     HStack(spacing: 10) {
                         ZStack(alignment: .center) {
-                            TextField("", text: $targetPeriod)
+                            TextField("", text: $viewModel.targetPeriod)
                                 .focused($focusedField, equals: .period)
                                 .keyboardType(.numberPad)
                                 .frame(width: 80)
@@ -106,7 +98,7 @@ struct NewChallengeView: View {
                                 .tint(.blue)
                                 .multilineTextAlignment(.center)
                             
-                            if targetPeriod.isEmpty {
+                            if viewModel.targetPeriod.isEmpty {
                                 Text("30")
                                     .foregroundColor(Color.white.opacity(0.4))
                                     .allowsHitTesting(false)
@@ -126,7 +118,7 @@ struct NewChallengeView: View {
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(Color.white.opacity(0.8))
                     
-                    Text(dateFormatter.string(from: startDate))
+                    Text(viewModel.formattedDate)
                         .padding(15)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(Color(UIColor(red: 0.15, green: 0.15, blue: 0.25, alpha: 1.0)))
@@ -137,15 +129,11 @@ struct NewChallengeView: View {
                 Spacer()
 
                 Button(action: {
-                    print("새 도전 만들기:")
-                    print("제목: \(challengeTitle)")
-                    print("내용: \(challengeDescription)")
-                    print("기간: \(targetPeriod) 일")
-                    print("시작일: \(dateFormatter.string(from: startDate))")
+                    viewModel.createChallenge()
                     focusedField = nil
                 }) {
                     HStack(spacing: 10) {
-                        Image(systemName: "flag.filled")
+                        Image(systemName: "flag.fill")
                             .font(.system(size: 18, weight: .semibold))
                         
                         Text("도전 시작하기")
@@ -171,12 +159,18 @@ struct NewChallengeView: View {
                     .cornerRadius(10)
                     .shadow(color: Color(UIColor(red: 0.2, green: 0.3, blue: 0.7, alpha: 0.3)), radius: 8, x: 0, y: 4)
                 }
-                .disabled(challengeTitle.isEmpty || challengeDescription.isEmpty || targetPeriod.isEmpty)
-                .opacity((challengeTitle.isEmpty || challengeDescription.isEmpty || targetPeriod.isEmpty) ? 0.5 : 1.0)
+                .disabled(!viewModel.isFormValid)
+                .opacity(viewModel.isFormValid ? 1.0 : 0.5)
 
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 30)
+        }
+        .onChange(of: viewModel.shouldDismiss) { _, shouldDismiss in
+            if shouldDismiss {
+                ChallengesViewModel.shared.refreshChallenges()
+                presentationMode.wrappedValue.dismiss()
+            }
         }
     }
 }

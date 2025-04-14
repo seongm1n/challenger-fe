@@ -2,12 +2,12 @@ import SwiftUI
 
 struct CompletionView: View {
     @Environment(\.presentationMode) var presentationMode
-    
-    let challengeTitle = "매일 30분 조깅하기"
-    let challengeDescription = "매일 아침 30분씩 조깅을 하면서 건강한 하루를 시작하기 위한 도전입니다. 꾸준히 실천하여 건강 습관을 만들어보세요."
-    
-    @State private var reflectionText = ""
+    @StateObject private var viewModel: CompletionViewModel
     @FocusState private var isTextFieldFocused: Bool
+    
+    init(challenge: Challenge) {
+        _viewModel = StateObject(wrappedValue: CompletionViewModel(challenge: challenge))
+    }
     
     var body: some View {
         ZStack {
@@ -29,7 +29,7 @@ struct CompletionView: View {
                                 .font(.system(size: 18, weight: .semibold))
                                 .foregroundColor(.white)
                             
-                            Text(challengeTitle)
+                            Text(challenge.title)
                                 .font(.system(size: 22, weight: .bold))
                                 .foregroundColor(.white)
                                 .padding(15)
@@ -43,10 +43,24 @@ struct CompletionView: View {
                                 .font(.system(size: 18, weight: .semibold))
                                 .foregroundColor(.white)
                             
-                            Text(challengeDescription)
+                            Text(challenge.description)
                                 .font(.system(size: 16))
                                 .foregroundColor(.white.opacity(0.8))
                                 .lineSpacing(5)
+                                .padding(15)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(Color(UIColor(red: 0.15, green: 0.15, blue: 0.25, alpha: 1.0)))
+                                .cornerRadius(10)
+                        }
+                        
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text("진행 기간")
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundColor(.white)
+                            
+                            Text("총 \(challenge.duration)일")
+                                .font(.system(size: 16))
+                                .foregroundColor(.white.opacity(0.8))
                                 .padding(15)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .background(Color(UIColor(red: 0.15, green: 0.15, blue: 0.25, alpha: 1.0)))
@@ -63,13 +77,8 @@ struct CompletionView: View {
                                 .foregroundColor(.white.opacity(0.7))
                                 .padding(.bottom, 5)
                             
-                            Text("도전을 진행하면서 느낀 점, 어려웠던 점, 배운 점 등을 자유롭게 적어주세요.")
-                                .font(.system(size: 14))
-                                .foregroundColor(.white.opacity(0.7))
-                                .padding(.bottom, 10)
-                            
                             ZStack(alignment: .topLeading) {
-                                TextEditor(text: $reflectionText)
+                                TextEditor(text: $viewModel.retrospectionText)
                                     .focused($isTextFieldFocused)
                                     .padding(10)
                                     .frame(minHeight: 200)
@@ -77,8 +86,12 @@ struct CompletionView: View {
                                     .foregroundColor(.white)
                                     .cornerRadius(10)
                                     .scrollContentBackground(.hidden)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(viewModel.errorMessage != nil ? Color.red : Color.clear, lineWidth: 1)
+                                    )
                                 
-                                if reflectionText.isEmpty && !isTextFieldFocused {
+                                if viewModel.retrospectionText.isEmpty && !isTextFieldFocused {
                                     Text("도전을 진행하면서 느낀 점, 어려웠던 점, 배운 점 등을 자유롭게 적어주세요.")
                                         .font(.system(size: 15))
                                         .foregroundColor(.white.opacity(0.4))
@@ -86,6 +99,13 @@ struct CompletionView: View {
                                         .padding(.vertical, 18)
                                         .allowsHitTesting(false)
                                 }
+                            }
+                            
+                            if let errorMessage = viewModel.errorMessage {
+                                Text(errorMessage)
+                                    .foregroundColor(.red)
+                                    .font(.system(size: 14))
+                                    .padding(.top, 5)
                             }
                         }
                     }
@@ -100,11 +120,18 @@ struct CompletionView: View {
                 Spacer()
                 
                 Button(action: {
-                    saveReflection()
+                    isTextFieldFocused = false
+                    viewModel.saveRetrospection()
                 }) {
                     HStack(spacing: 10) {
-                        Image(systemName: "checkmark.circle")
-                            .font(.system(size: 18, weight: .semibold))
+                        if viewModel.isSaving {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                .scaleEffect(0.8)
+                        } else {
+                            Image(systemName: "checkmark.circle")
+                                .font(.system(size: 18, weight: .semibold))
+                        }
                         
                         Text("도전 완료하기")
                             .font(.system(size: 18, weight: .bold))
@@ -129,6 +156,8 @@ struct CompletionView: View {
                     .cornerRadius(10)
                     .shadow(color: Color(UIColor(red: 0.2, green: 0.3, blue: 0.7, alpha: 0.3)), radius: 8, x: 0, y: 4)
                 }
+                .disabled(viewModel.isSaving)
+                .opacity(viewModel.isSaving ? 0.7 : 1.0)
                 .padding(.horizontal, 20)
                 .padding(.bottom, 30)
                 .background(
@@ -151,15 +180,31 @@ struct CompletionView: View {
                     .foregroundColor(.white)
             }
         )
+        .onChange(of: viewModel.isCompleted) { _, isCompleted in
+            if isCompleted {
+                presentationMode.wrappedValue.dismiss()
+            }
+        }
     }
-    
-    private func saveReflection() {
-        presentationMode.wrappedValue.dismiss()
+}
+
+extension CompletionView {
+    var challenge: Challenge {
+        let mirror = Mirror(reflecting: viewModel)
+        return mirror.children.first(where: { $0.label == "challenge" })?.value as! Challenge
     }
 }
 
 struct CompletionView_Previews: PreviewProvider {
     static var previews: some View {
-        CompletionView()
+        let sampleChallenge = Challenge(
+            id: 1,
+            title: "매일 30분 조깅하기",
+            description: "매일 아침 30분씩 조깅을 하면서 건강한 하루를 시작하기 위한 도전입니다. 꾸준히 실천하여 건강 습관을 만들어보세요.",
+            duration: 30,
+            progress: 0.7
+        )
+        
+        CompletionView(challenge: sampleChallenge)
     }
 }

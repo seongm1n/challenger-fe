@@ -2,18 +2,34 @@ import SwiftUI
 
 struct ChallengeView: View {
     @Environment(\.presentationMode) var presentationMode
+    @StateObject private var viewModel: ChallengeViewModel
     
-    let challengeTitle = "매일 30분 조깅하기"
-    let description = "매일 아침 30분씩 조깅을 하면서 건강한 하루를 시작하기 위한 도전입니다. 꾸준히 실천하여 건강 습관을 만들어보세요."
-    let startDate = "2023년 12월 1일"
-    let targetPeriod = "30일"
-    let progressValue: Double = 0.7
-    let progressText = "21일째 (70%)"
-    let certifications: [(day: String, date: String, detail: String)] = [
-        ("21일차 인증", "2023.12.21", "오늘도 30분 조깅 완료!..."),
-        ("20일차 인증", "2023.12.20", "비가 와서 실내에서..."),
-        ("19일차 인증", "2023.12.19", "아침 공기가 상쾌해서...")
-    ]
+    init(challenge: Challenge) {
+        _viewModel = StateObject(wrappedValue: ChallengeViewModel(challenge: challenge))
+    }
+    
+    private var certifications: [(day: String, date: String, detail: String)] {
+        let now = Date()
+        let challenge = viewModel.challenge
+        
+        let completedDays = Int(Double(challenge.duration) * challenge.progress)
+        
+        var result: [(day: String, date: String, detail: String)] = []
+        let shortFormatter = DateFormatter()
+        shortFormatter.dateFormat = "yyyy.MM.dd"
+        
+        for i in (0..<min(completedDays, 3)).reversed() {
+            let daysAgo = (completedDays - i)
+            let certDate = Calendar.current.date(byAdding: .day, value: -i, to: now) ?? now
+            result.append((
+                day: "\(daysAgo)일차 인증",
+                date: shortFormatter.string(from: certDate),
+                detail: "오늘의 도전 인증 완료!"
+            ))
+        }
+        
+        return result
+    }
 
     var body: some View {
         ZStack {
@@ -35,15 +51,14 @@ struct ChallengeView: View {
                 ScrollView {
                     VStack(spacing: 20) {
                         ChallengeDetailCard(
-                            title: challengeTitle,
-                            description: description,
-                            startDate: startDate,
-                            targetPeriod: targetPeriod
+                            title: viewModel.challenge.title,
+                            description: viewModel.challenge.description,
+                            duration: "\(viewModel.challenge.duration)일"
                         )
 
                         ProgressCard(
-                            progressValue: progressValue,
-                            progressText: progressText
+                            progressValue: viewModel.challenge.progress,
+                            progressText: "\(Int(viewModel.challenge.progress * 100))% 완료"
                         )
 
                         CertificationHistoryCard(certifications: certifications)
@@ -54,12 +69,36 @@ struct ChallengeView: View {
                 
                 Spacer()
 
-                ActionButtons()
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 30)
+                ActionButtons(
+                    onPause: {
+                        viewModel.showProgressUpdate()
+                    },
+                    onReflect: {
+                        viewModel.showReflection()
+                    }
+                )
+                .padding(.horizontal, 20)
+                .padding(.bottom, 30)
             }
         }
         .navigationBarHidden(true)
+        .toolbar(.hidden, for: .tabBar)
+        .alert("도전 중단", isPresented: $viewModel.showingProgressUpdateView, actions: {
+            Button("취소", role: .cancel) {}
+            Button("중단하기", role: .destructive) {
+                viewModel.completeChallenge()
+            }
+        }, message: {
+            Text("'\(viewModel.challenge.title)' 도전을 중단하시겠습니까?")
+        })
+        .fullScreenCover(isPresented: $viewModel.showingCompletionView) {
+            CompletionView(challenge: viewModel.challenge)
+        }
+        .onChange(of: viewModel.shouldDismiss) { _, shouldDismiss in
+            if shouldDismiss {
+                presentationMode.wrappedValue.dismiss()
+            }
+        }
     }
 }
 
@@ -67,8 +106,7 @@ struct ChallengeView: View {
 struct ChallengeDetailCard: View {
     let title: String
     let description: String
-    let startDate: String
-    let targetPeriod: String
+    let duration: String
 
     var body: some View {
         VStack(alignment: .leading, spacing: 15) {
@@ -82,8 +120,7 @@ struct ChallengeDetailCard: View {
                 .lineSpacing(5)
 
             VStack(alignment: .leading, spacing: 5) {
-                Text("시작일: \(startDate)")
-                Text("목표 기간: \(targetPeriod)")
+                Text("목표 기간: \(duration)")
             }
             .font(.system(size: 14))
             .foregroundColor(Color.white.opacity(0.6))
@@ -161,17 +198,24 @@ struct CertificationHistoryCard: View {
                 .foregroundColor(.white)
                 .padding(.bottom, 5)
 
-            ForEach(certifications.prefix(3), id: \.day) { cert in // 상위 3개만 표시
-                CertificationRow(certification: cert)
-            }
+            if certifications.isEmpty {
+                Text("아직 인증 내역이 없습니다")
+                    .font(.system(size: 14))
+                    .foregroundColor(Color.white.opacity(0.6))
+                    .padding(.vertical, 10)
+            } else {
+                ForEach(certifications.prefix(3), id: \.day) { cert in
+                    CertificationRow(certification: cert)
+                }
 
-            if certifications.count > 3 {
-                Button(action: { /* TODO: 전체 인증 내역 보기 액션 */ }) {
-                    Text("더 보기")
-                        .font(.system(size: 15, weight: .medium))
-                        .foregroundColor(Color(UIColor(red: 0.4, green: 0.6, blue: 1.0, alpha: 1.0)))
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        .padding(.top, 5)
+                if certifications.count > 3 {
+                    Button(action: { /* TODO: 전체 인증 내역 보기 액션 */ }) {
+                        Text("더 보기")
+                            .font(.system(size: 15, weight: .medium))
+                            .foregroundColor(Color(UIColor(red: 0.4, green: 0.6, blue: 1.0, alpha: 1.0)))
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.top, 5)
+                    }
                 }
             }
         }
@@ -222,9 +266,12 @@ struct CertificationRow: View {
 }
 
 struct ActionButtons: View {
+    var onPause: () -> Void
+    var onReflect: () -> Void
+    
     var body: some View {
         HStack(spacing: 15) {
-            Button(action: { /* TODO: 포기하기 액션 */ }) {
+            Button(action: onPause) {
                 HStack(spacing: 8) {
                     Image(systemName: "pause.circle")
                         .font(.system(size: 16))
@@ -252,7 +299,7 @@ struct ActionButtons: View {
                 .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
             }
             
-            Button(action: { /* TODO: 회고하기 액션 */ }) {
+            Button(action: onReflect) {
                 HStack(spacing: 8) {
                     Image(systemName: "pencil.and.outline")
                         .font(.system(size: 16))
@@ -285,6 +332,14 @@ struct ActionButtons: View {
 
 struct ChallengeView_Previews: PreviewProvider {
     static var previews: some View {
-        ChallengeView()
+        let sampleChallenge = Challenge(
+            id: 1,
+            title: "매일 30분 조깅하기",
+            description: "매일 아침 30분씩 조깅을 하면서 건강한 하루를 시작하기 위한 도전입니다. 꾸준히 실천하여 건강 습관을 만들어보세요.",
+            duration: 30,
+            progress: 0.7
+        )
+        
+        ChallengeView(challenge: sampleChallenge)
     }
 }
