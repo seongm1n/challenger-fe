@@ -1,53 +1,30 @@
 import SwiftUI
 
+// MARK: - 챌린지 상세 화면
 struct ChallengeView: View {
     @Environment(\.presentationMode) var presentationMode
     @StateObject private var viewModel: ChallengeViewModel
     
+    // MARK: - 초기화
     init(challenge: Challenge) {
         _viewModel = StateObject(wrappedValue: ChallengeViewModel(challenge: challenge))
     }
     
+    // MARK: - 데이터
     private var certifications: [(day: String, date: String, detail: String)] {
-        let now = Date()
-        let challenge = viewModel.challenge
-        
-        let completedDays = Int(Double(challenge.duration) * challenge.progress)
-        
-        var result: [(day: String, date: String, detail: String)] = []
-        let shortFormatter = DateFormatter()
-        shortFormatter.dateFormat = "yyyy.MM.dd"
-        
-        for i in (0..<min(completedDays, 3)).reversed() {
-            let daysAgo = (completedDays - i)
-            let certDate = Calendar.current.date(byAdding: .day, value: -i, to: now) ?? now
-            result.append((
-                day: "\(daysAgo)일차 인증",
-                date: shortFormatter.string(from: certDate),
-                detail: "오늘의 도전 인증 완료!"
-            ))
-        }
-        
-        return result
+        return []
     }
 
+    // MARK: - 뷰 본문
     var body: some View {
         ZStack {
             StarryBackgroundView()
 
             VStack(spacing: 0) {
-                HStack {
-                    Button(action: { presentationMode.wrappedValue.dismiss() }) {
-                        Image(systemName: "arrow.left")
-                            .foregroundColor(.white)
-                            .font(.title2)
-                    }
-                    Spacer()
+                NavigationBar {
+                    presentationMode.wrappedValue.dismiss()
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 15)
-                .padding(.bottom, 10)
-
+                
                 ScrollView {
                     VStack(spacing: 20) {
                         ChallengeDetailCard(
@@ -102,7 +79,26 @@ struct ChallengeView: View {
     }
 }
 
+// MARK: - 네비게이션 바
+struct NavigationBar: View {
+    var action: () -> Void
+    
+    var body: some View {
+        HStack {
+            Button(action: action) {
+                Image(systemName: "arrow.left")
+                    .foregroundColor(.white)
+                    .font(.title2)
+            }
+            Spacer()
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 15)
+        .padding(.bottom, 10)
+    }
+}
 
+// MARK: - 챌린지 상세 카드
 struct ChallengeDetailCard: View {
     let title: String
     let description: String
@@ -147,6 +143,7 @@ struct ChallengeDetailCard: View {
     }
 }
 
+// MARK: - 진행 상태 카드
 struct ProgressCard: View {
     let progressValue: Double
     let progressText: String
@@ -188,6 +185,7 @@ struct ProgressCard: View {
     }
 }
 
+// MARK: - 인증 내역 카드
 struct CertificationHistoryCard: View {
     let certifications: [(day: String, date: String, detail: String)]
 
@@ -240,6 +238,7 @@ struct CertificationHistoryCard: View {
     }
 }
 
+// MARK: - 인증 내역 행
 struct CertificationRow: View {
     let certification: (day: String, date: String, detail: String)
     
@@ -265,6 +264,7 @@ struct CertificationRow: View {
     }
 }
 
+// MARK: - 액션 버튼
 struct ActionButtons: View {
     var onPause: () -> Void
     var onReflect: () -> Void
@@ -330,6 +330,7 @@ struct ActionButtons: View {
     }
 }
 
+// MARK: - 미리보기
 struct ChallengeView_Previews: PreviewProvider {
     static var previews: some View {
         let sampleChallenge = Challenge(

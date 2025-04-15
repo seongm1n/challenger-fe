@@ -19,12 +19,4 @@ struct Challenge: Identifiable, Codable, Hashable {
         let percentage = Int(progress * 100)
         return "\(percentage)% 완료"
     }
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-    
-    static func == (lhs: Challenge, rhs: Challenge) -> Bool {
-        return lhs.id == rhs.id
-    }
 } 
