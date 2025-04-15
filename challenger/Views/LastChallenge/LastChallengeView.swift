@@ -186,7 +186,7 @@ struct EvaluationCard: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 15) {
-            Text("평가")
+            Text("응원")
                 .font(.system(size: 22, weight: .bold))
                 .foregroundColor(.white)
             
