@@ -347,8 +347,8 @@ private enum AppColors {
     
     static let pauseGradient = LinearGradient(
         gradient: Gradient(colors: [
-            Color(UIColor(red: 0.65, green: 0.35, blue: 0.45, alpha: 0.9)),
-            Color(UIColor(red: 0.55, green: 0.25, blue: 0.35, alpha: 0.85))
+            Color(UIColor(red: 0.25, green: 0.25, blue: 0.35, alpha: 0.9)),
+            Color(UIColor(red: 0.2, green: 0.2, blue: 0.3, alpha: 0.8))
         ]),
         startPoint: .topLeading,
         endPoint: .bottomTrailing

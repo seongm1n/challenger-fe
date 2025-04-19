@@ -284,8 +284,8 @@ struct ActionButtons: View {
                 .background(
                     LinearGradient(
                         gradient: Gradient(colors: [
-                            Color(UIColor(red: 0.65, green: 0.35, blue: 0.45, alpha: 0.9)),
-                            Color(UIColor(red: 0.55, green: 0.25, blue: 0.35, alpha: 0.85))
+                            Color(UIColor(red: 0.25, green: 0.25, blue: 0.35, alpha: 0.9)),
+                            Color(UIColor(red: 0.2, green: 0.2, blue: 0.3, alpha: 0.8))
                         ]),
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
@@ -303,7 +303,7 @@ struct ActionButtons: View {
                 HStack(spacing: 8) {
                     Image(systemName: "pencil.and.outline")
                         .font(.system(size: 16))
-                    Text("회고하기")
+                    Text("완료하기")
                         .font(.system(size: 16, weight: .medium))
                 }
                 .foregroundColor(.white)
