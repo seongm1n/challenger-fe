@@ -26,8 +26,6 @@ struct ContentView: View {
             ChallengesView()
         case .history:
             LastChallengesView()
-        default:
-            EmptyView()
         }
     }
 }

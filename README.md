@@ -31,7 +31,6 @@
 ## 🛠️ 기술 스택
 
 - **언어**: Swift
-- **프레임워크**: SwiftUI, Combine
 - **아키텍처**: MVVM (Model-View-ViewModel)
 - **데이터 관리**: AppStorage, UserDefaults
 - **네트워킹**: Swift의 async/await 기반 API 통신

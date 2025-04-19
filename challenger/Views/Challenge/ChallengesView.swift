@@ -2,13 +2,16 @@ import SwiftUI
 
 struct ChallengesView: View {
     @StateObject private var viewModel = ChallengesViewModel.shared
+    @State private var showNewChallenge = false
     
     var body: some View {
         ZStack {
             StarryBackgroundView()
             
             VStack(spacing: 20) {
-                HeaderView(title: "도전 목록")
+                HeaderWithAddButton(title: "도전 목록", onAddTap: {
+                    showNewChallenge = true
+                })
                 
                 mainContent
                 
@@ -41,6 +44,9 @@ struct ChallengesView: View {
                 CompletionView(challenge: challenge)
             }
         }
+        .sheet(isPresented: $showNewChallenge) {
+            NewChallengeView()
+        }
     }
     
     // MARK: - 조건부 메인 콘텐츠
@@ -70,17 +76,47 @@ struct ChallengesView: View {
     }
 }
 
-// MARK: - 헤더 뷰
-private struct HeaderView: View {
+// MARK: - 헤더와 추가 버튼
+private struct HeaderWithAddButton: View {
     let title: String
+    let onAddTap: () -> Void
     
     var body: some View {
-        Text(title)
-            .font(.system(size: 26, weight: .bold))
-            .foregroundColor(.white)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 20)
-            .padding(.top, 20)
+        HStack {
+            Text(title)
+                .font(.system(size: 26, weight: .bold))
+                .foregroundColor(.white)
+            
+            Spacer()
+            
+            Button(action: onAddTap) {
+                ZStack {
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                gradient: Gradient(colors: [
+                                    Color(UIColor(red: 0.35, green: 0.55, blue: 0.85, alpha: 1.0)),
+                                    Color(UIColor(red: 0.25, green: 0.45, blue: 0.75, alpha: 0.95))
+                                ]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 42, height: 42)
+                        .overlay(
+                            Circle()
+                                .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                        )
+                        .shadow(color: Color(UIColor(red: 0.1, green: 0.1, blue: 0.3, alpha: 0.5)), radius: 4, x: 0, y: 2)
+                    
+                    Image(systemName: "plus")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(.white)
+                }
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 20)
     }
 }
 
@@ -157,10 +193,13 @@ struct ChallengeCard: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 15) {
-            ChallengeInfoSection(
-                challenge: challenge,
-                onTap: onCardTap
-            )
+            Button(action: onCardTap) {
+                VStack(alignment: .leading, spacing: 15) {
+                    ChallengeInfoContent(challenge: challenge)
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(PlainButtonStyle())
             
             Divider()
                 .background(Color.white.opacity(0.1))
@@ -175,7 +214,7 @@ struct ChallengeCard: View {
                 )
                 
                 ActionButton(
-                    title: "회고하기",
+                    title: "완료하기",
                     icon: "pencil.and.outline",
                     gradient: AppColors.reflectGradient,
                     action: onReflect
@@ -193,35 +232,31 @@ struct ChallengeCard: View {
     }
 }
 
-// MARK: - 챌린지 정보 섹션
-private struct ChallengeInfoSection: View {
+// MARK: - 챌린지 정보 컨텐츠
+private struct ChallengeInfoContent: View {
     let challenge: Challenge
-    let onTap: () -> Void
     
     var body: some View {
-        Button(action: onTap) {
-            VStack(alignment: .leading, spacing: 15) {
-                Text(challenge.title)
-                    .font(.system(size: 22, weight: .bold))
-                    .foregroundColor(.white)
-                
-                Text(challenge.description)
-                    .font(.system(size: 14))
-                    .foregroundColor(Color.white.opacity(0.7))
-                    .lineSpacing(5)
-                    .lineLimit(2)
-                
-                ProgressBar(value: challenge.progress)
-                    .frame(height: 10)
-                    .padding(.top, 5)
-                
-                Text(challenge.progressText)
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(.white)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
+        VStack(alignment: .leading, spacing: 15) {
+            Text(challenge.title)
+                .font(.system(size: 22, weight: .bold))
+                .foregroundColor(.white)
+            
+            Text(challenge.description)
+                .font(.system(size: 14))
+                .foregroundColor(Color.white.opacity(0.7))
+                .lineSpacing(5)
+                .lineLimit(2)
+            
+            ProgressBar(value: challenge.progress)
+                .frame(height: 10)
+                .padding(.top, 5)
+            
+            Text(challenge.progressText)
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(.white)
         }
-        .buttonStyle(PlainButtonStyle())
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 

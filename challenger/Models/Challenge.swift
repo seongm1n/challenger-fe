@@ -19,4 +19,4 @@ struct Challenge: Identifiable, Codable, Hashable {
         let percentage = Int(progress * 100)
         return "\(percentage)% 완료"
     }
-} 
+}

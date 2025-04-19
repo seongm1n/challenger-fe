@@ -8,6 +8,8 @@ class CompletionViewModel: ObservableObject {
     @Published var isCompleted: Bool = false
     @Published var isSaving: Bool = false
     @Published var errorMessage: String? = nil
+    @Published var showSuccessView: Bool = false
+    @Published var assessment: String? = nil
     
     private let challenge: Challenge
     private let challengeService: ChallengeService
@@ -33,10 +35,39 @@ class CompletionViewModel: ObservableObject {
         isSaving = true
         errorMessage = nil
         
-        Task{
-            try await lastChallengeService.saveLastChallenge(challenge, retrospectionText)
+        Task { [weak self] in
+            guard let self = self else { return }
+            
+            do {
+                let challenge = self.challenge
+                let retrospectionText = self.retrospectionText
+                
+                let lastChallenge = try await lastChallengeService.saveLastChallenge(challenge, retrospectionText)
+                
+                let assessment = lastChallenge.assessment
+                
+                await MainActor.run { [weak self] in
+                    guard let self = self else { return }
+                    
+                    ChallengesViewModel.shared.refreshChallenges()
+            
+                    self.assessment = assessment
+                    self.isSaving = false
+                    self.showSuccessView = true
+                }
+            } catch {
+                await MainActor.run { [weak self] in
+                    guard let self = self else { return }
+                    
+                    self.isSaving = false
+                    self.errorMessage = "저장 중 오류가 발생했습니다"
+                }
+            }
         }
-        
-        isCompleted = true
+    }
+    
+    // 성공 화면에서 확인 버튼 클릭 시 호출되는 함수
+    func completeSuccessView() {
+        self.isCompleted = true
     }
 }

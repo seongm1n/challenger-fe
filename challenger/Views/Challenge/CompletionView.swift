@@ -17,7 +17,9 @@ struct CompletionView: View {
             StarryBackgroundView()
             
             VStack(spacing: 0) {
-                HeaderView(title: "회고하기")
+                HeaderView(title: "회고하기", onBackTap: {
+                    presentationMode.wrappedValue.dismiss()
+                })
                 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
@@ -43,14 +45,23 @@ struct CompletionView: View {
                     viewModel.saveRetrospection()
                 }
             )
+            
+            // 로딩 화면
+            if viewModel.isSaving {
+                LoadingOverlay()
+            }
+            
+            // 성공 화면
+            if viewModel.showSuccessView {
+                SuccessView(assessment: viewModel.assessment, onComplete: {
+                    viewModel.completeSuccessView()
+                })
+                .edgesIgnoringSafeArea(.all)
+            }
         }
         .onTapGesture {
             isTextFieldFocused = false
         }
-        .navigationBarBackButtonHidden(true)
-        .navigationBarItems(leading: BackButton(action: {
-            presentationMode.wrappedValue.dismiss()
-        }))
         .onChange(of: viewModel.isCompleted) { _, isCompleted in
             if isCompleted {
                 presentationMode.wrappedValue.dismiss()
@@ -62,28 +73,26 @@ struct CompletionView: View {
 // MARK: - 헤더 뷰
 private struct HeaderView: View {
     let title: String
+    let onBackTap: () -> Void
     
     var body: some View {
-        Text(title)
-            .font(.system(size: 28, weight: .bold))
-            .foregroundColor(.white)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 20)
-            .padding(.top, 30)
-            .padding(.bottom, 30)
-    }
-}
-
-// MARK: - 뒤로가기 버튼
-private struct BackButton: View {
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            Image(systemName: "arrow.left")
-                .font(.title2)
+        HStack(alignment: .center) {
+            Button(action: onBackTap) {
+                Image(systemName: "arrow.left")
+                    .font(.system(size: 22, weight: .semibold))
+                    .foregroundColor(.white)
+            }
+            .padding(.trailing, 10)
+            
+            Text(title)
+                .font(.system(size: 28, weight: .bold))
                 .foregroundColor(.white)
+            
+            Spacer()
         }
+        .padding(.horizontal, 20)
+        .padding(.top, 30)
+        .padding(.bottom, 30)
     }
 }
 
