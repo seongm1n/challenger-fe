@@ -106,6 +106,21 @@ struct ChallengeDetailCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 15) {
+            HStack(alignment: .center, spacing: 12) {
+                Image(systemName: "flag.fill")
+                    .font(.system(size: 24))
+                    .foregroundColor(Color(UIColor(red: 0.4, green: 0.65, blue: 0.95, alpha: 1.0)))
+                    .shadow(color: Color(UIColor(red: 0.3, green: 0.5, blue: 0.8, alpha: 0.5)), radius: 4, x: 0, y: 1)
+                
+                Text("도전 정보")
+                    .font(.system(size: 22, weight: .bold))
+                    .foregroundColor(.white)
+            }
+            
+            Divider()
+                .background(Color.white.opacity(0.2))
+                .padding(.bottom, 5)
+
             Text(title)
                 .font(.system(size: 24, weight: .bold))
                 .foregroundColor(.white)
@@ -115,31 +130,19 @@ struct ChallengeDetailCard: View {
                 .foregroundColor(Color.white.opacity(0.8))
                 .lineSpacing(5)
 
-            VStack(alignment: .leading, spacing: 5) {
+            HStack(spacing: 6) {
+                Image(systemName: "calendar")
+                    .font(.system(size: 16))
+                    .foregroundColor(Color.white.opacity(0.7))
+                
                 Text("목표 기간: \(duration)")
+                    .font(.system(size: 14))
+                    .foregroundColor(Color.white.opacity(0.7))
             }
-            .font(.system(size: 14))
-            .foregroundColor(Color.white.opacity(0.6))
             .padding(.top, 10)
         }
-        .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(UIColor(red: 0.15, green: 0.15, blue: 0.25, alpha: 0.8)),
-                    Color(UIColor(red: 0.12, green: 0.12, blue: 0.22, alpha: 0.7))
-                ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 15)
-                .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
-        )
-        .cornerRadius(15)
-        .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
+        .cardStyle(type: .details)
     }
 }
 
@@ -150,38 +153,43 @@ struct ProgressCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("진행 상태")
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(.white)
+            HStack(alignment: .center, spacing: 12) {
+                Image(systemName: "chart.bar.fill")
+                    .font(.system(size: 24))
+                    .foregroundColor(Color(UIColor(red: 0.4, green: 0.65, blue: 0.95, alpha: 1.0)))
+                    .shadow(color: Color(UIColor(red: 0.3, green: 0.5, blue: 0.8, alpha: 0.5)), radius: 4, x: 0, y: 1)
+                
+                Text("진행 상태")
+                    .font(.system(size: 22, weight: .bold))
+                    .foregroundColor(.white)
+            }
+            
+            Divider()
+                .background(Color.white.opacity(0.2))
+                .padding(.bottom, 10)
 
             HStack {
                 ProgressBar(value: progressValue)
                     .frame(height: 10)
                 
                 Text(progressText)
-                    .font(.system(size: 14))
-                    .foregroundColor(Color.white.opacity(0.8))
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(progressTextColor(value: progressValue))
                     .padding(.leading, 10)
             }
         }
-        .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(UIColor(red: 0.15, green: 0.15, blue: 0.25, alpha: 0.8)),
-                    Color(UIColor(red: 0.12, green: 0.12, blue: 0.22, alpha: 0.7))
-                ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 15)
-                .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
-        )
-        .cornerRadius(15)
-        .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
+        .cardStyle(type: .progress)
+    }
+    
+    private func progressTextColor(value: Double) -> Color {
+        if value < 0.3 {
+            return Color(UIColor(red: 0.9, green: 0.5, blue: 0.5, alpha: 1.0))
+        } else if value < 0.7 {
+            return Color(UIColor(red: 0.95, green: 0.7, blue: 0.3, alpha: 1.0))
+        } else {
+            return Color(UIColor(red: 0.4, green: 0.8, blue: 0.4, alpha: 1.0))
+        }
     }
 }
 
@@ -191,16 +199,32 @@ struct CertificationHistoryCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 15) {
-            Text("인증 내역")
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(.white)
-                .padding(.bottom, 5)
+            HStack(alignment: .center, spacing: 12) {
+                Image(systemName: "checkmark.seal.fill")
+                    .font(.system(size: 24))
+                    .foregroundColor(Color(UIColor(red: 0.4, green: 0.7, blue: 0.4, alpha: 1.0)))
+                    .shadow(color: Color(UIColor(red: 0.3, green: 0.6, blue: 0.3, alpha: 0.5)), radius: 4, x: 0, y: 1)
+                
+                Text("인증 내역")
+                    .font(.system(size: 22, weight: .bold))
+                    .foregroundColor(.white)
+            }
+            
+            Divider()
+                .background(Color.white.opacity(0.2))
+                .padding(.bottom, 10)
 
             if certifications.isEmpty {
-                Text("아직 인증 내역이 없습니다")
-                    .font(.system(size: 14))
-                    .foregroundColor(Color.white.opacity(0.6))
-                    .padding(.vertical, 10)
+                HStack(spacing: 10) {
+                    Image(systemName: "info.circle")
+                        .font(.system(size: 18))
+                        .foregroundColor(Color.white.opacity(0.7))
+                    
+                    Text("아직 인증 내역이 없습니다")
+                        .font(.system(size: 16))
+                        .foregroundColor(Color.white.opacity(0.7))
+                }
+                .padding(.vertical, 10)
             } else {
                 ForEach(certifications.prefix(3), id: \.day) { cert in
                     CertificationRow(certification: cert)
@@ -208,33 +232,23 @@ struct CertificationHistoryCard: View {
 
                 if certifications.count > 3 {
                     Button(action: { /* TODO: 전체 인증 내역 보기 액션 */ }) {
-                        Text("더 보기")
-                            .font(.system(size: 15, weight: .medium))
-                            .foregroundColor(Color(UIColor(red: 0.4, green: 0.6, blue: 1.0, alpha: 1.0)))
-                            .frame(maxWidth: .infinity, alignment: .center)
-                            .padding(.top, 5)
+                        HStack(spacing: 5) {
+                            Text("더 보기")
+                                .font(.system(size: 15, weight: .medium))
+                                .foregroundColor(Color(UIColor(red: 0.4, green: 0.6, blue: 1.0, alpha: 1.0)))
+                            
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 12))
+                                .foregroundColor(Color(UIColor(red: 0.4, green: 0.6, blue: 1.0, alpha: 1.0)))
+                        }
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.top, 5)
                     }
                 }
             }
         }
-        .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(UIColor(red: 0.15, green: 0.15, blue: 0.25, alpha: 0.8)),
-                    Color(UIColor(red: 0.12, green: 0.12, blue: 0.22, alpha: 0.7))
-                ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 15)
-                .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
-        )
-        .cornerRadius(15)
-        .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
+        .cardStyle(type: .certification)
     }
 }
 
@@ -245,21 +259,42 @@ struct CertificationRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text(certification.day)
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.white)
+                HStack(spacing: 8) {
+                    Image(systemName: "calendar.badge.checkmark")
+                        .font(.system(size: 14))
+                        .foregroundColor(Color.white.opacity(0.7))
+                    
+                    Text(certification.day)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.white)
+                }
                 Spacer()
                 Text(certification.date)
                     .font(.system(size: 13))
                     .foregroundColor(Color.white.opacity(0.6))
             }
-            Text(certification.detail)
-                .font(.system(size: 14))
-                .foregroundColor(Color.white.opacity(0.7))
-                .lineLimit(1)
+            
+            HStack(alignment: .top, spacing: 8) {
+                Image(systemName: "text.quote")
+                    .font(.system(size: 12))
+                    .foregroundColor(Color.white.opacity(0.5))
+                    .padding(.top, 2)
+                
+                Text(certification.detail)
+                    .font(.system(size: 14))
+                    .foregroundColor(Color.white.opacity(0.7))
+                    .lineLimit(1)
+            }
         }
         .padding(15)
-        .background(Color(UIColor(red: 0.2, green: 0.2, blue: 0.3, alpha: 1.0)))
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color(UIColor(red: 0.2, green: 0.2, blue: 0.3, alpha: 1.0)))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
+                )
+        )
         .cornerRadius(10)
     }
 }

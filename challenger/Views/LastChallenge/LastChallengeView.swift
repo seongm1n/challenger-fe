@@ -60,39 +60,6 @@ struct LastChallengeView: View {
     }
 }
 
-// MARK: - 카드 스타일 수정자
-struct CardModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .padding(20)
-            .background(backgroundGradient)
-            .overlay(
-                RoundedRectangle(cornerRadius: 15)
-                    .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
-            )
-            .cornerRadius(15)
-            .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
-    }
-    
-    private var backgroundGradient: LinearGradient {
-        LinearGradient(
-            gradient: Gradient(colors: [
-                Color(UIColor(red: 0.15, green: 0.15, blue: 0.25, alpha: 0.8)),
-                Color(UIColor(red: 0.12, green: 0.12, blue: 0.22, alpha: 0.7))
-            ]),
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-    }
-}
-
-// MARK: - 카드 스타일 확장
-extension View {
-    func cardStyle() -> some View {
-        modifier(CardModifier())
-    }
-}
-
 // MARK: - 뒤로가기 버튼
 struct BackNavigationButton: View {
     let action: () -> Void
@@ -130,6 +97,18 @@ struct ChallengeHeaderCard: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 15) {
+            HStack(alignment: .center, spacing: 15) {
+                Image(systemName: "trophy.fill")
+                    .font(.system(size: 28))
+                    .foregroundColor(Color(UIColor(red: 0.95, green: 0.8, blue: 0.2, alpha: 1.0)))
+                    .shadow(color: Color(UIColor(red: 0.9, green: 0.7, blue: 0.2, alpha: 0.6)), radius: 4, x: 0, y: 1)
+                
+                Text("완료한 도전")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(Color.white.opacity(0.7))
+            }
+            .padding(.bottom, 5)
+            
             Text(title)
                 .font(.system(size: 32, weight: .bold))
                 .foregroundColor(.white)
@@ -140,7 +119,7 @@ struct ChallengeHeaderCard: View {
                 .foregroundColor(Color.white.opacity(0.8))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .cardStyle()
+        .cardStyle(type: .header)
         .padding(.bottom, 20)
     }
 }
@@ -151,9 +130,20 @@ struct RetrospectionCard: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 15) {
-            Text("내 회고")
-                .font(.system(size: 22, weight: .bold))
-                .foregroundColor(.white)
+            HStack(alignment: .center, spacing: 12) {
+                Image(systemName: "doc.text.fill")
+                    .font(.system(size: 24))
+                    .foregroundColor(Color(UIColor(red: 0.4, green: 0.7, blue: 0.4, alpha: 1.0)))
+                    .shadow(color: Color(UIColor(red: 0.3, green: 0.6, blue: 0.3, alpha: 0.6)), radius: 4, x: 0, y: 1)
+                
+                Text("내 회고")
+                    .font(.system(size: 22, weight: .bold))
+                    .foregroundColor(.white)
+            }
+            
+            Divider()
+                .background(Color.white.opacity(0.2))
+                .padding(.bottom, 5)
             
             if retrospection.isEmpty {
                 EmptyRetrospectionView()
@@ -165,7 +155,7 @@ struct RetrospectionCard: View {
                     .padding(.bottom, 10)
             }
         }
-        .cardStyle()
+        .cardStyle(type: .retrospection)
         .padding(.bottom, 20)
     }
 }
@@ -186,15 +176,27 @@ struct EvaluationCard: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 15) {
-            Text("응원")
-                .font(.system(size: 22, weight: .bold))
-                .foregroundColor(.white)
+            HStack(alignment: .center, spacing: 12) {
+                Image(systemName: "quote.bubble.fill")
+                    .font(.system(size: 24))
+                    .foregroundColor(Color(UIColor(red: 0.95, green: 0.7, blue: 0.3, alpha: 1.0)))
+                    .shadow(color: Color(UIColor(red: 0.85, green: 0.6, blue: 0.2, alpha: 0.6)), radius: 4, x: 0, y: 1)
+                
+                Text("응원 메시지")
+                    .font(.system(size: 22, weight: .bold))
+                    .foregroundColor(.white)
+            }
+            
+            Divider()
+                .background(Color.white.opacity(0.2))
+                .padding(.bottom, 5)
             
             Text(evaluation)
                 .foregroundColor(Color.white.opacity(0.8))
                 .lineSpacing(8)
+                .padding(.bottom, 5)
         }
-        .cardStyle()
+        .cardStyle(type: .evaluation)
     }
 }
 

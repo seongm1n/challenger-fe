@@ -17,7 +17,7 @@ struct CompletionView: View {
             StarryBackgroundView()
             
             VStack(spacing: 0) {
-                HeaderView(title: "회고하기", onBackTap: {
+                HeaderView(title: "완료하기", onBackTap: {
                     presentationMode.wrappedValue.dismiss()
                 })
                 
