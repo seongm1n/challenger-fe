@@ -82,40 +82,66 @@ private struct HeaderWithAddButton: View {
     let onAddTap: () -> Void
     
     var body: some View {
-        HStack {
-            Text(title)
-                .font(.system(size: 26, weight: .bold))
-                .foregroundColor(.white)
-            
-            Spacer()
-            
-            Button(action: onAddTap) {
-                ZStack {
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                gradient: Gradient(colors: [
-                                    Color(UIColor(red: 0.35, green: 0.55, blue: 0.85, alpha: 1.0)),
-                                    Color(UIColor(red: 0.25, green: 0.45, blue: 0.75, alpha: 0.95))
-                                ]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 42, height: 42)
-                        .overlay(
-                            Circle()
-                                .stroke(Color.white.opacity(0.2), lineWidth: 1)
-                        )
-                        .shadow(color: Color(UIColor(red: 0.1, green: 0.1, blue: 0.3, alpha: 0.5)), radius: 4, x: 0, y: 2)
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(alignment: .center) {
+                HStack(spacing: 12) {
+                    Image(systemName: "target")
+                        .font(.system(size: 22))
+                        .foregroundColor(Color(UIColor(red: 0.5, green: 0.85, blue: 1.0, alpha: 1.0)))
+                        .shadow(color: Color(UIColor(red: 0.3, green: 0.6, blue: 0.9, alpha: 0.7)), radius: 6, x: 0, y: 0)
                     
-                    Image(systemName: "plus")
-                        .font(.system(size: 20, weight: .bold))
+                    Text(title)
+                        .font(.system(size: 26, weight: .bold))
                         .foregroundColor(.white)
                 }
+                
+                Spacer()
+                
+                Button(action: onAddTap) {
+                    ZStack {
+                        Circle()
+                            .fill(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        Color(UIColor(red: 0.35, green: 0.55, blue: 0.85, alpha: 1.0)),
+                                        Color(UIColor(red: 0.25, green: 0.45, blue: 0.75, alpha: 0.95))
+                                    ]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .frame(width: 44, height: 44)
+                            .overlay(
+                                Circle()
+                                    .stroke(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [
+                                                Color.white.opacity(0.3),
+                                                Color.white.opacity(0.1)
+                                            ]),
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        ),
+                                        lineWidth: 1
+                                    )
+                            )
+                            .shadow(color: Color(UIColor(red: 0.1, green: 0.1, blue: 0.3, alpha: 0.5)), radius: 6, x: 0, y: 3)
+                        
+                        Image(systemName: "plus")
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundColor(.white)
+                    }
+                    .scaleEffect(1.0)
+                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: true)
+                }
             }
+            
+            Text("목표를 세우고 자신을 발전시켜 보세요")
+                .font(.system(size: 16))
+                .foregroundColor(.white.opacity(0.7))
+                .padding(.leading, 2)
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 22)
         .padding(.top, 20)
     }
 }
@@ -123,10 +149,16 @@ private struct HeaderWithAddButton: View {
 // MARK: - 로딩 뷰
 private struct LoadingView: View {
     var body: some View {
-        ProgressView()
-            .progressViewStyle(CircularProgressViewStyle(tint: .white))
-            .scaleEffect(1.5)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        VStack(spacing: 20) {
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                .scaleEffect(1.5)
+            
+            Text("도전 목록을 불러오는 중...")
+                .font(.system(size: 16))
+                .foregroundColor(.white.opacity(0.8))
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
@@ -135,21 +167,46 @@ private struct ErrorView: View {
     let message: String
     
     var body: some View {
-        Text(message)
-            .foregroundColor(.red)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        VStack(spacing: 15) {
+            Image(systemName: "exclamationmark.triangle")
+                .font(.system(size: 40))
+                .foregroundColor(Color(UIColor(red: 1.0, green: 0.7, blue: 0.3, alpha: 1.0)))
+                .shadow(color: Color(UIColor(red: 0.8, green: 0.4, blue: 0.2, alpha: 0.5)), radius: 5, x: 0, y: 2)
+            
+            Text("오류가 발생했습니다")
+                .font(.system(size: 18, weight: .bold))
+                .foregroundColor(.white.opacity(0.9))
+            
+            Text(message)
+                .font(.system(size: 16))
+                .foregroundColor(.red.opacity(0.9))
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 20)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
 // MARK: - 빈 상태 뷰
 private struct EmptyStateView: View {
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 25) {
+            Image(systemName: "list.star")
+                .font(.system(size: 60))
+                .foregroundColor(.white.opacity(0.5))
+                .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 2)
+            
             Text("현재 진행 중인 도전이 없습니다")
-                .font(.system(size: 18))
-                .foregroundColor(.white.opacity(0.7))
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundColor(.white.opacity(0.8))
+            
+            Text("오른쪽 상단 + 버튼을 눌러\n새로운 도전을 시작해보세요!")
+                .font(.system(size: 16))
+                .foregroundColor(.white.opacity(0.6))
                 .multilineTextAlignment(.center)
+                .lineSpacing(5)
         }
+        .padding(30)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
@@ -178,6 +235,8 @@ private struct ChallengeListView: View {
                         }
                     )
                 }
+                Spacer()
+                    .frame(height: 20)
             }
             .padding(.horizontal, 20)
         }

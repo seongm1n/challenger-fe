@@ -30,28 +30,28 @@ struct CompletionView: View {
                             isTextFieldFocused: $isTextFieldFocused,
                             errorMessage: viewModel.errorMessage
                         )
+                        
+                        // 버튼을 회고 작성 칸과 가깝게 배치
+                        CompleteButton(
+                            isSaving: viewModel.isSaving,
+                            action: {
+                                isTextFieldFocused = false
+                                viewModel.saveRetrospection()
+                            }
+                        )
+                        .padding(.top, 15)
+                        .padding(.bottom, 30)
                     }
                     .padding(.horizontal, 20)
-                    .padding(.bottom, 100)
                 }
                 
                 Spacer()
             }
             
-            BottomCompleteButton(
-                isSaving: viewModel.isSaving,
-                action: {
-                    isTextFieldFocused = false
-                    viewModel.saveRetrospection()
-                }
-            )
-            
-            // 로딩 화면
             if viewModel.isSaving {
                 LoadingOverlay()
             }
             
-            // 성공 화면
             if viewModel.showSuccessView {
                 SuccessView(assessment: viewModel.assessment, onComplete: {
                     viewModel.completeSuccessView()
@@ -238,59 +238,49 @@ private struct TextEditorWithPlaceholder: View {
     }
 }
 
-// MARK: - 하단 완료 버튼
-private struct BottomCompleteButton: View {
+// MARK: - 완료 버튼
+private struct CompleteButton: View {
     let isSaving: Bool
     let action: () -> Void
     
     var body: some View {
-        VStack {
-            Spacer()
-            
-            Button(action: action) {
-                HStack(spacing: 10) {
-                    if isSaving {
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                            .scaleEffect(0.8)
-                    } else {
-                        Image(systemName: "checkmark.circle")
-                            .font(.system(size: 18, weight: .semibold))
-                    }
-                    
-                    Text("도전 완료하기")
-                        .font(.system(size: 18, weight: .bold))
+        Button(action: action) {
+            HStack(spacing: 10) {
+                if isSaving {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .scaleEffect(0.8)
+                } else {
+                    Image(systemName: "checkmark.circle")
+                        .font(.system(size: 18, weight: .semibold))
                 }
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 18)
-                .background(
-                    LinearGradient(
-                        gradient: Gradient(colors: [
-                            Color(UIColor(red: 0.35, green: 0.55, blue: 0.85, alpha: 1.0)),
-                            Color(UIColor(red: 0.25, green: 0.45, blue: 0.75, alpha: 0.95))
-                        ]),
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.white.opacity(0.2), lineWidth: 0.5)
-                )
-                .cornerRadius(10)
-                .shadow(color: Color(UIColor(red: 0.2, green: 0.3, blue: 0.7, alpha: 0.3)), radius: 8, x: 0, y: 4)
+                
+                Text("도전 완료하기")
+                    .font(.system(size: 18, weight: .bold))
             }
-            .disabled(isSaving)
-            .opacity(isSaving ? 0.7 : 1.0)
-            .padding(.horizontal, 20)
-            .padding(.bottom, 30)
+            .foregroundColor(.white)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 18)
             .background(
-                Rectangle()
-                    .fill(Color(UIColor(red: 0.11, green: 0.11, blue: 0.2, alpha: 0.95)))
-                    .edgesIgnoringSafeArea(.bottom)
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color(UIColor(red: 0.35, green: 0.55, blue: 0.85, alpha: 1.0)),
+                        Color(UIColor(red: 0.25, green: 0.45, blue: 0.75, alpha: 0.95))
+                    ]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
             )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.white.opacity(0.2), lineWidth: 0.5)
+            )
+            .cornerRadius(10)
+            .shadow(color: Color(UIColor(red: 0.2, green: 0.3, blue: 0.7, alpha: 0.3)), radius: 8, x: 0, y: 4)
         }
+        .disabled(isSaving)
+        .opacity(isSaving ? 0.7 : 1.0)
+        .padding(.horizontal, 5)
     }
 }
 

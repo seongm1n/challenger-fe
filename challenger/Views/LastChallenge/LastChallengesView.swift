@@ -36,36 +36,75 @@ private struct HeaderView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
-            Text("완료한 도전 : 총 \(challengeCount)개")
-                .font(.system(size: 26, weight: .bold))
-                .foregroundColor(.white)
-                .padding(.top, 20)
-                .padding(.bottom, 30)
+            HStack(alignment: .center, spacing: 12) {
+                Image(systemName: "trophy.fill")
+                    .font(.system(size: 22))
+                    .foregroundColor(Color(UIColor(red: 1.0, green: 0.85, blue: 0.4, alpha: 1.0)))
+                    .shadow(color: Color(UIColor(red: 1.0, green: 0.7, blue: 0.3, alpha: 0.7)), radius: 8, x: 0, y: 0)
+                
+                Text("완료한 도전")
+                    .font(.system(size: 26, weight: .bold))
+                    .foregroundColor(.white)
+            }
+            .padding(.top, 20)
+            
+            HStack(spacing: 5) {
+                Text("총")
+                    .font(.system(size: 18))
+                    .foregroundColor(.white.opacity(0.8))
+                
+                Text("\(challengeCount)개")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(Color(UIColor(red: 0.5, green: 0.85, blue: 1.0, alpha: 1.0)))
+                
+                Text("의 도전을 완료했습니다")
+                    .font(.system(size: 18))
+                    .foregroundColor(.white.opacity(0.8))
+            }
+            .padding(.top, 5)
+            .padding(.bottom, 30)
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 22)
     }
 }
 
 // MARK: - 로딩 표시기
 private struct LoadingIndicator: View {
     var body: some View {
-        ProgressView()
-            .progressViewStyle(CircularProgressViewStyle(tint: .white))
-            .scaleEffect(1.5)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        VStack {
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                .scaleEffect(1.5)
+            
+            Text("도전 내역을 불러오는 중...")
+                .font(.system(size: 16))
+                .foregroundColor(.white.opacity(0.8))
+                .padding(.top, 20)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
 // MARK: - 데이터 없음 상태 뷰
 private struct EmptyStateView: View {
     var body: some View {
-        VStack(spacing: 20) {
-            Text("완료한 도전이 없습니다")
-                .font(.system(size: 18))
-                .foregroundColor(.white.opacity(0.7))
+        VStack(spacing: 25) {
+            Image(systemName: "calendar.badge.exclamationmark")
+                .font(.system(size: 60))
+                .foregroundColor(.white.opacity(0.5))
+                .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 2)
+            
+            Text("아직 완료한 도전이 없습니다")
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundColor(.white.opacity(0.8))
+            
+            Text("새로운 도전을 시작하고 목표를 달성해보세요!")
+                .font(.system(size: 16))
+                .foregroundColor(.white.opacity(0.6))
                 .multilineTextAlignment(.center)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+        .padding(30)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
@@ -82,6 +121,8 @@ private struct CompletedChallengeList: View {
                     }
                     .buttonStyle(PlainButtonStyle())
                 }
+                Spacer()
+                    .frame(height: 20)
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 20)
