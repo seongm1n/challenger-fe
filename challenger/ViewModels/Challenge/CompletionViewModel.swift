@@ -66,7 +66,6 @@ class CompletionViewModel: ObservableObject {
         }
     }
     
-    // 성공 화면에서 확인 버튼 클릭 시 호출되는 함수
     func completeSuccessView() {
         self.isCompleted = true
     }

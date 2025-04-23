@@ -11,7 +11,7 @@ struct TabBarView: View {
     var body: some View {
         HStack(spacing: 30) {
             TextTab(
-                title: "도전",
+                title: "현재 도전",
                 isSelected: selectedTab == .challenges,
                 animation: animation,
                 action: {

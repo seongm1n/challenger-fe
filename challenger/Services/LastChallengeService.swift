@@ -16,7 +16,6 @@ class LastChallengeService {
             retrospection: retrospection
         )
         
-        // 응답을 LastChallenge 객체로 변환
         return LastChallenge(
             id: lastChallengeResponse.id,
             title: lastChallengeResponse.title,
@@ -32,7 +31,6 @@ class LastChallengeService {
         return try await apiManager.fetchLastChallenges(userId: userId)
     }
     
-    // 날짜 문자열을 Date 객체로 변환
     private func stringToDate(_ dateString: String) -> Date {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"

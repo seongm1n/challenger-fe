@@ -15,6 +15,69 @@ struct ContentView: View {
                 
                 VStack {
                     Spacer()
+                    Rectangle()
+                        .fill(Color.clear)
+                        .frame(height: 180)
+                        .background(
+                            ZStack {
+                                BlurView(style: .systemMaterialDark)
+                                    .mask(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [
+                                                Color.black,
+                                                Color.black.opacity(0.9),
+                                                Color.black.opacity(0.8),
+                                                Color.black.opacity(0.6),
+                                                Color.black.opacity(0.2),
+                                                Color.clear
+                                            ]),
+                                            startPoint: .bottom,
+                                            endPoint: .top
+                                        )
+                                    )
+                                
+                                BlurView(style: .systemChromeMaterialDark)
+                                    .mask(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [
+                                                Color.black,
+                                                Color.black.opacity(0.8),
+                                                Color.clear
+                                            ]),
+                                            startPoint: .bottom,
+                                            endPoint: UnitPoint(x: 0.5, y: 0.4)
+                                        )
+                                    )
+                                
+                                BlurView(style: .systemThickMaterialDark)
+                                    .mask(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [
+                                                Color.black,
+                                                Color.black.opacity(0.5),
+                                                Color.clear
+                                            ]),
+                                            startPoint: .bottom,
+                                            endPoint: UnitPoint(x: 0.5, y: 0.6)
+                                        )
+                                    )
+                                
+                                LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        Color(UIColor(red: 0.06, green: 0.07, blue: 0.16, alpha: 0.9)),
+                                        Color(UIColor(red: 0.06, green: 0.07, blue: 0.16, alpha: 0.5)),
+                                        Color(UIColor(red: 0.06, green: 0.07, blue: 0.16, alpha: 0.0))
+                                    ]),
+                                    startPoint: .bottom,
+                                    endPoint: .top
+                                )
+                            }
+                        )
+                }
+                .edgesIgnoringSafeArea(.bottom)
+                
+                VStack {
+                    Spacer()
                     TabBarView(selectedTab: $selectedTab)
                         .padding(.horizontal, 20)
                         .padding(.bottom, 1)

@@ -39,7 +39,7 @@ struct ChallengesView: View {
         .navigationDestination(item: $viewModel.selectedChallengeForDetail) { challenge in
             ChallengeView(challenge: challenge)
         }
-        .fullScreenCover(isPresented: $viewModel.showingCompletionView) { 
+        .fullScreenCover(isPresented: $viewModel.showingCompletionView) {
             if let challenge = viewModel.selectedChallengeForReflection {
                 CompletionView(challenge: challenge)
             }
